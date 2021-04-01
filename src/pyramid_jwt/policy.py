@@ -8,7 +8,7 @@ import jwt
 from pyramid.renderers import JSON
 from webob.cookies import CookieProfile
 from zope.interface import implementer
-from pyramid.authentication import CallbackAuthenticationPolicy
+from pyramid.authentication import CallbackAuthenticationPolicy, _SimpleSerializer
 from pyramid.interfaces import IAuthenticationPolicy, IRendererFactory
 
 log = logging.getLogger("pyramid_jwt")
@@ -195,12 +195,15 @@ class JWTCookieAuthenticationPolicy(JWTAuthenticationPolicy):
             reissue_time = reissue_time.total_seconds()
         self.reissue_time = reissue_time
 
+        serializer = _SimpleSerializer()
+
         self.cookie_profile = CookieProfile(
             cookie_name=self.cookie_name,
             secure=self.https_only,
             max_age=self.max_age,
             httponly=True,
             path=cookie_path,
+            serializer=serializer
         )
 
     @staticmethod
